@@ -124,9 +124,7 @@ Snake.prototype.move = function() {
     }
 
     this.segments.unshift(newHead);
-    if (newHead.equal(apple.position) && apple.superapple === false && apple.duperapple === false) {
-
-    	console.log("Snake picked up APPLE")
+    if (newHead.equal(apple.position)) {
         score++;
 
         apple_timer = 0;
@@ -137,7 +135,7 @@ Snake.prototype.move = function() {
         if (interval <= 62) {
             interval -= 2;
         }
-        console.log('Speed is ' + interval)
+
         apple.move();
 
         if (score % 10 === 0) {
@@ -146,78 +144,6 @@ Snake.prototype.move = function() {
 
             var audio = new Audio('sfx/sfx_coin_double3.wav');
         }
-        audio.play();
-        console.log('Snake length is ' + snake.segments.length)
-        console.log('-----------------------');
-    }
-
-     else if (newHead.equal(apple.position) && apple.superapple === true && apple.duperapple === false) {
-
-    	console.log("Snake picked up GREEN APPLE")
-    	console.log('Speed is ' + interval);
-    	apple.setSuper(false);
-    	score++;
-    	apple_timer = 0;
-
-
-    	if(snake.segments.length > 6)
-    	{
-    	for(var i = 0; i <= Math.floor((snake.segments.length) + 1 / 2); i++)
-    	{
-    		snake.segments.pop();
-    	}
-
-    	}
-
-
-    	if(snake.segments.length < 8)
-    	{
-    		snake.segments.pop();
-    		console.log('Snake hasnt shortened because it is not long enough');
-    	}
-
-
-
-    	console.log('Snake has shortened, new length is ' + snake.segments.length);
-    	console.log('-----------------------');
-
-
-        apple.move();
-
-        var audio = new Audio('sfx/sfx_sounds_powerup4.wav');
-        audio.play();
-    }
-
-         else if (newHead.equal(apple.position) && apple.duperapple === true && apple.superapple === false) {
-
-    	console.log("Snake picked up YELLOW APPLE")
-
-    	apple.setDuper(false);
-    	score++;
-    	apple_timer = 0;
-
-
-    	
-    	if (interval <= 80)
-    	{
-    		interval += 20;
-    	}	
-
-    	else if (interval > 80)
-    	{
-    		interval = interval + (interval / 100 * 10);
-    	}
-
-
-    	console.log('Game slows down, new speed is ' + interval)
-
-    	 console.log('Snake length is ' + snake.segments.length)
-        console.log('-----------------------');
-
-
-        apple.move();
-
-        var audio = new Audio('sfx/sfx_sounds_powerup5.wav');
         audio.play();
     }
 
@@ -260,41 +186,16 @@ Snake.prototype.setDirection = function(newDirection) {
 // Задаем конструктор Apple (яблоко)
 var Apple = function() {
     this.position = new Block(10, 10);
-    this.superapple = false;
-    this.duperapple = false;
 };
 
 // Рисуем кружок в позиции яблока
 Apple.prototype.draw = function(color) {
     this.position.drawCircle(color);
-
-    
 };
 // Перемещаем яблоко в случайную позицию
 Apple.prototype.move = function() {
     var randomCol = Math.floor(Math.random() * (widthInBlocks - 2)) + 1;
     var randomRow = Math.floor(Math.random() * (heightInBlocks - 2)) + 1;
-
-
-    var superRandomNumber = Math.floor(Math.random() * (512 - 0) + 0);
-	
-
-	     if (superRandomNumber % 8 === 0)
-        {
-        	apple.setDuper(false);
-        	apple.setSuper(true);
-
-        }
-
-
-	     if (superRandomNumber % 15 === 0)
-        {
-        	apple.setSuper(false);
-        	apple.setDuper(true);
-
-        }
-
-        
 
     if (randomCol === 1) {
         randomCol++;
@@ -311,22 +212,14 @@ Apple.prototype.move = function() {
     if (randomRow === 1) {
         randomRow++;
     }
+
+
     this.position = new Block(randomCol, randomRow);
 };
-
-Apple.prototype.setSuper = function(bool) {
-
-	this.superapple = bool;
-}
-
-Apple.prototype.setDuper = function(bool) {
-	this.duperapple = bool;
-}
 
 // Создаем объект-змейку и объект-яблоко
 var snake = new Snake();
 var apple = new Apple();
-
 // Запускаем функцию анимации через setInterval
 
 var interval = 120;
@@ -342,36 +235,18 @@ var go_up = false;
 
 var displace = 1;
 
-
-
 function callback() {
 
     if (is_snek_ded) {
         ctx.clearRect(0, 0, width, height);
         drawScore();
         snake.move();
-        snake.draw("limegreen");
-
-   
+        snake.draw();
 
         if (score <= 22) {
 
             if (apple_timer < 30) {
-            	if(apple.superapple)
-            	{
-            		apple.draw("#21DC21");
-            	}
-
-            		else if(apple.duperapple)
-            	{
-            		apple.draw("#FFF228");
-            	}
-
-
-            	else
-            	{
                 apple.draw("#801515");
-            	}
             }
             if (apple_timer > 30) {
                 if (apple_timer % 10 === 0 || apple_timer % 10 === 5) {
@@ -379,20 +254,7 @@ function callback() {
                     var audio = new Audio('sfx/sfx_movement_footsteps1b.wav')
                     audio.play();
                 } else {
-                    if(apple.superapple)
-            	{
-            		apple.draw("#21DC21");
-            	}
-
-            		else if(apple.duperapple)
-            	{
-            		apple.draw("#FFF228");
-            	}
-
-            	else
-            	{
-                apple.draw("#801515");
-            	}
+                    apple.draw("#801515");
                 }
             }
 
@@ -401,21 +263,7 @@ function callback() {
         if (score > 22) {
 
             if (apple_timer < 70) {
-                	if(apple.superapple)
-            	{
-            		apple.draw("#21DC21");
-            	}
-
-            		else if(apple.duperapple)
-            	{
-            		apple.draw("#FFF228");
-            	}
-
-
-            	else
-            	{
                 apple.draw("#801515");
-            	}
             }
             if (apple_timer > 70) {
                 if (apple_timer % 10 === 0 || apple_timer % 10 === 5) {
@@ -423,40 +271,17 @@ function callback() {
                     var audio = new Audio('sfx/sfx_movement_footsteps1b.wav')
                     audio.play();
                 } else {
-                    if(apple.superapple)
-            	{
-            		apple.draw("#21DC21");
-            	}
-
-            		else if(apple.duperapple)
-            	{
-            		apple.draw("#FFF228");
-            	}
-
-
-            	else
-            	{
-                apple.draw("#801515");
-            	}
+                    apple.draw("#801515");
                 }
             }
 
         }
         drawBorder(c_r, c_g, c_b);
         apple_timer++;
-        //console.log(apple_timer);
+        console.log(apple_timer);
 
         if (score <= 22) {
             if (apple_timer >= 50) {
-            	if (apple.superapple)
-            	{
-            		apple.setSuper(false);
-            	}
-
-            	if (apple.duperapple)
-            	{
-            		apple.setDuper(false);
-            	}
                 apple.move();
                 var audio = new Audio('sfx/sfx_movement_jump8.wav')
                 audio.play();
@@ -467,14 +292,6 @@ function callback() {
 
         if (score > 22) {
             if (apple_timer >= 100) {
-            	if (apple.superapple)
-            	{
-            		apple.setSuper(false);
-            	}
-            	if (apple.superapple)
-            	{
-            		apple.setDuper(false);
-            	}
                 apple.move();
                 var audio = new Audio('sfx/sfx_movement_jump8.wav')
                 audio.play();
